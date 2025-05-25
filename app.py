@@ -1,8 +1,5 @@
 import streamlit as st
 import joblib as jb
-from streamlit_extras.stylable_container import stylable_container
-
-
 
 st.set_page_config(page_title="Ragebait Predictor", layout="centered")
 
