@@ -1,5 +1,6 @@
 import streamlit as st
 import re
+import requests
 from datetime import datetime
 
 # Page config
@@ -18,16 +19,30 @@ with st.form("contact_form"):
     submitted = st.form_submit_button("Send")
 
     if submitted:
-        # Validate email
         if not re.match(r"^[\w\.-]+@gmail\.com$", email):
             st.error("Please enter a valid Gmail address.")
         elif name.strip() == "" or message.strip() == "":
             st.error("Name and message cannot be empty.")
         else:
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            with open("feedback.txt", "a") as f:
-                f.write(f"\n---\nTime: {timestamp}\nName: {name}\nEmail: {email}\nMessage: {message}\n")
-            st.success("✅ Feedback submitted! Thanks for reaching out.")
+            payload = {
+                "name": name,
+                "email": email,
+                "message": message,
+                "timestamp": timestamp
+            }
+
+            # Replace with your Google Apps Script Web App URL
+            url = "https://script.google.com/macros/s/AKfycbwIY1tG3T7Xx91O2UOPTZjszj7Z_Y-zGXQ4G-fCpjnuYCX0_uKFnyyyE5KHj99yTdax/exec"
+
+            try:
+                response = requests.post(url, json=payload)
+                if response.status_code == 200:
+                    st.success("✅ Feedback submitted! Thanks for reaching out.")
+                else:
+                    st.error("❌ Failed to submit feedback. Please try again.")
+            except Exception as e:
+                st.error(f"⚠️ Error: {e}")
 
 # Divider
 st.markdown("---")
